@@ -11,7 +11,7 @@ An EEG records the brain's electrical activity using small electrodes placed on 
 - Electrical fields travel through brain tissue, cerebrospinal fluid, skull and scalp before reaching electrodes. Those layers reduce spatial detail (they “blur” the field), which is why EEG localization is approximate and why deep sources are hard to see unless they are strong or propagate to surface cortex.
 - Because the signals are so small, The EEG system must filter and amplify them carefully to reduce noise from muscles, eyes, or the environment, and then boosts these microvolt-level signals and converts them to digital form for recording
 
-![diagram of dipoles](/docs/diagram.png)
+![diagram of dipoles](/docs/assets/diagram.png)
 
 #### Quote From A [Study](https://journals.plos.org/ploscompbiol/article?id=10.1371%2Fjournal.pcbi.1012794)
 *Here, we performed detailed biophysical and computational modelling of electric field generation in the brain to ascertain the extent to which spiking activity contributes to scalp EEG. We find that it generally does not, suggesting that high frequency broadband EEG signals reflect noise unrelated to brain activity, and validating that low frequency broadband signals are produced by electrical transmission between neurons and not spiking activity. However, our results do characterize a range of frequencies where EEG oscillations may be generated, either in part or in full, by spiking activity. We conclude that spiking activity does not produce broadband signals, but can still generate narrowband signals at high frequencies. Understanding the origins of high-frequency EEG signals has important implications for interpreting scalp recordings and informs the design of quantitative methods for signal analysis.*
@@ -22,7 +22,7 @@ An EEG records the brain's electrical activity using small electrodes placed on 
 ## Bands
 - The main human EEG bands are:
 	- **Delta (δ)**: ~0.5–4 Hz (slow waves, seen in deep sleep)
-	- **Theta (θ)**: ~4–7 Hz (drowsiness and young children, frontal region) 
+	- **Theta (θ)**: ~4–7 Hz (drowsiness and young children, frontal region)
 	- **Alpha (α)**: ~8–12 Hz seen over the posterior cortex, disappears when eyes open or attention increases (relaxed wakefulness, strongest over parietal/occipital sites)
 	- **Mu Rhythm**: ~7-12 Hz seen over the motor cortex ("ears to ears") at rest. Similar to alpha but is centered over the central regions. Attenuates/Desynchronizes during actual or imagined movement
 	- **Beta (β)**: ~13–30 Hz (active thinking/intense mental activity, often frontal regions)
@@ -30,8 +30,40 @@ An EEG records the brain's electrical activity using small electrodes placed on 
 	- e.g. high alpha with closed eyes, delta in deep sleep
 - By noting which bands dominate and where they appear on the scalp, clinicians assess brain state and function
 
-  ![Bands Diagram](/docs/bands.png)
-  
+![Bands Diagram](/docs/assets/bands.png)
+
+### Extended Explanation
+#### What each band reflects : The 5 types of brainwaves
+[source](https://www.sciencedirect.com/topics/agricultural-and-biological-sciences/brain-waves)
+#### 1. Delta (0.5–4 Hz)
+- Very slow “up–down” cycles in the cortex. Strong in deep, dreamless sleep (N3). During waking, high delta usually means drowsiness, eye movements, or drift.
+- **Why does it change? :**
+				- Big, slow waves need large groups of neurons to rise and fall together.
+Extra note: Rising delta during tasks can signal fatigue or eye-movement artifacts. Usually in research, they reject windows with very high delta unless they are studying sleep.
+#### 2. Theta (4–8 Hz):
+-  In adults, **frontal** **midline theta** appears during sustained mental effort and error monitoring (medial prefrontal/anterior cingulate circuits). In the hippocampus, theta supports memory and navigation (scalp sees this only weakly).
+- **Why it changes? :**
+			When the brain internally focuses (working memory, mental math, meditation), small networks synchronize at theta.
+#### Alpha (8–12 Hz)
+ A thalamo-cortical “idling/gating” rhythm; strongest over visual areas with **eyes closed**. It often **drops** when you open your eyes or engage with a task.
+- **Why it changes ?:**
+				When the brain “gates out” external input (rest, closed eyes), neurons synchronize at alpha. When you attend to the world, those neurons desynchronize, so alpha power falls.
+    - Higher alpha → relaxation/low arousal; Calm.
+    - **Alpha suppression** ( a drop) → **attention/arousal**.
+    - **Frontal Alpha Asymmetry (FAA)** (left vs right alpha) is used as a **valence** proxy:
+    relatively **lower alpha** (so more activation) on the **left** frontal side is often linked to **approach/positive** tendencies; relatively lower on the **right** to **withdrawal/negative**.
+#### Beta (12–30 Hz)
+Faster rhythms shaped by **sensorimotor** and **frontoparietal** loops; influenced by inhibitory interneurons and basal ganglia–cortical circuits. Increases with active thinking and motor preparation.
+- **Why it changes? :**
+			Goal-directed processing and muscle tension both **push energy** into beta/high-beta.
+    - **Higher beta** → **alertness/task engagement** --> can also rise with stress.
+    - Extra note:  jaw/forehead muscle tension can inflate high-beta.
+#### Gamma (30–100 Hz)
+Very fast local networks (usually they are driven by **parvalbumin interneurons**) that help tie features together during perception and learning. Mostly local and weak on the scalp.
+- **Why it changes ?:**
+			-When neurons in a small area work together very quickly, gamma power rises.
+    - Useful for **sensory processing** and some **high-arousal** states, but it is **easily contaminated by EMG** ->(tiny face/eye muscles).
+    - Broad band Gamma is usually handled with caution!
 ## Lobes
 - The brain has 4 main lobes: Frontal, Parietal, Occipital, and Temporal
 - Certain frequency bands tend to be the strongest over particular lobes as previously mentioned in the Bands section
@@ -64,7 +96,7 @@ An EEG records the brain's electrical activity using small electrodes placed on 
 	- Theta: working memory, focus under cognitive load
 	- Alpha: relaxed wakefulness, inhibition of unnecessary activity
 	- Beta: alertness, concentration, decision making
-	- Gamma: working memory, conscious attention, problem solving 
+	- Gamma: working memory, conscious attention, problem solving
 - *C3, C4* - Central/motor cortex (movement control: left motor is C3, while right motor is C4)
 	- Alpha: (Mu rhythm) motor rest
 	- Beta: active movement or motor planning

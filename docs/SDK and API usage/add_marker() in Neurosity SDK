@@ -1,15 +1,13 @@
-
 ## What is `add_marker()`?
-
-- A function in the Neurosity SDK that lets you insert a timestamped event into the eeg timeline. However, it does not change the eeg signal, it only records important things happening. 
+- A function in the Neurosity SDK that lets you insert a timestamped event into the eeg timeline. However, it does not change the eeg signal, it only records important things happening.
 ![[Pasted image 20250826223412.png]]
 
-- **`label`** -> string describing the event 
+- **`label`** -> string describing the event
 - **`timestamp`** -> optional, milliseconds since epoch. If not provided, SDK assigns current time.
 
-Reference:https://docs.neurosity.co/docs/reference/classes/neurosity#addmarker 
+Reference:https://docs.neurosity.co/docs/reference/classes/neurosity#addmarker
 
-## Another example  : 
+## Another example  :
 
 ==***neurosity.add_marker({***==
     ==***"label": "eyes_closed",***==
@@ -25,11 +23,11 @@ Reference:https://docs.neurosity.co/docs/reference/classes/neurosity#addmarker
 
 
 
-# FOR SARA & AMR TO TRY : 
-Things we can try to determine if add_marker() is helpful or not: 
+# FOR SARA & AMR TO TRY :
+Things we can try to determine if add_marker() is helpful or not:
 - Calm vs focused : Once we determine the state (calm or focused), we may add markers. Markers let you label ground truth states (when subject was actually focusing vs relaxing).
-- This makes it possible to verify if Calm/Focus probabilities reflect reality.   
+- This makes it possible to verify if Calm/Focus probabilities reflect reality.
 
-- Multi-trial studies    
+- Multi-trial studies
     - Use markers like `"trial_1_start"`, `"trial_1_end"`.
     - Helps organize long sessions into labeled chunks.d

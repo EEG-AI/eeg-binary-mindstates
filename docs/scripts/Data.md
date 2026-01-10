@@ -1,4 +1,3 @@
-*note: to find tests for retrieving all types of EEG data go [here](/src/python/notebooks/SDKtest.ipynb)
 ## Epoch
 - instead of streaming one sample at a time (at 250 samples a second), the API groups 25 samples into a mini-window called an *epoch*, allowing you to recieve 25 epochs per second, with each `epoch = 25 samples / 250 Hz = 100 ms` worth of data.
 
@@ -11,17 +10,21 @@ Why use epochs instead of single samples?
 Check the Brainwaves theory for an explanation of the EEG data and how to interpret it. This section will explain the different Noise & Artifacts that can show up in the raw data
 ### Raw unfiltered
 - EEG data without any processing, filtering, or cleaning
-- conains the neural activity, but also enviromental electrical noise, DC drift, and muscle/eye/movement artifacts
+- contains the neural activity, but also environmental electrical noise, DC drift, and muscle/eye/movement artifacts
 - the filtered version is usually better for ML & analysis
 ### Noise
-- 
+- Noise are unwanted outputs that aren't relevant to our neural decoding use case.
+- Since the EEG device is worn on the scalp, there are layers of skin, hair, device movement, etc., that can add noise to our data
+- The mind is in charge of many tasks, meaning we can receive EEG data that's mislabeled due to the noise from a different operation in the brain
 ### Artifacts
-- 
+- Any unrelated action that causes the EEG to change/react.
+- Includes motor tasks, reaction to imagery, etc.
+- Minimizing them comes down to the user of the device. Useful methods involve sitting comfortably, avoiding head movement, focus, etc.
 ---
 ## Absolute Power By Band
 - Absolute power is the amount of activity within a specific frequency band of brain waves, usually ordered from slowest to fastest
 
-- 
+-
 ## PSD Symmetry
 - Power Spectral Density (PSD) is an effective method to differentiate between noise and features in a signal by showing how much power is in different frequency bands. One of the most common features extracted from EEG because brain states modulate the power of certain frequency bands (e.g. high alpha = relaxed, beta busts in motor cortex = preparing to move)
 - the meaning of Symmetry in PSD symmetry is for comparing electrode pairs that are mirrored across the head
