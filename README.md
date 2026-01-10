@@ -1,26 +1,31 @@
 # `eeg-binary-mindstates`
 - neural decoding
 # File Structure
-- The *data* folder will contain a folder for raw data recieved from the emulator, as well as processed training data
-- The *models* folder will store all models ready to use
-- The *src* folder will contain all the project's scripts for preprocessing, cleaning, training, and live inference
-- The *docs* folder will contain theory on brainwaves as well as intuition on different scripts in src
+- The *data* folder stores raw data recieved from the device, as well as processed training data
+- The *models* folder stores all models ready to use
+- The *src* folder contains all the project's scripts for:
+  - recording, preprocessing, and cleaning EEG.
+  - Training and (live) inference
+- The *docs* folder contains:
+  - Guides on major scripts in `src`
+  - Essential theory on Brainwaves
+- The *examples* folder holds scripts that are ready to run with no device using existing data in the `data` folder.
 # Getting Started
-## Setup (Outdated)
-- Create a `.env` file with the following structure
+## Environment
+1. Create a `.env` file with the variables required to connect your neurosity device. If you simply want to run example, skip this step as well as the Data Collection/Pre-processing sections.
 ```
 NEUROSITY_EMAIL=your email here
 NEUROSITY_PASSWORD=your password here
 NEUROSITY_DEVICE_ID=your device id here
 ```
-- Setup a virtual enviroment (*Using Python 3.12*) and IDE
+2. Setup a virtual enviroment (*Using Python 3.12*) and IDE
   - note: there are Jupyter Notebooks provided for data analysis and examples
-- Install everything in `requirements.txt`
-- Go to [SDK Testing Notebook](src/python/notebooks/SDKtest.ipynb) to test SDK/API device connection, and analyze data
+3. Source the virtual environment and install the libraries in `/requirements.txt`
+4. Go to [SDK Testing Notebook](src/python/notebooks/SDKtest.ipynb) to test SDK/API device connection, and analyze incoming data in the form of epochs and simple graphs. This is unnecessary if you just want to run the examples
 ## Data Collection
-- run the [data collection](src/python/scripts/data_collection.py) script to connect and start recieving live data streams, make sure to change the config variables to choose the script running time and other configurations such as buffer time:
+5. run the [data collection](src/python/scripts/data_collection.py) script to connect and start recieving live data streams from your device, make sure to change the config variables to choose how many epochs should be gathered and buffer size (how much data to recieve before autosaving):
 ## Data Cleaning & Pre-processing (in progress)
-- run the [processing](src/python/scripts/pre-processing.py) to clean the NaN rows and add all mathematical summary & relative columns/selected features
+- run the [processing](src/python/scripts/pre-processing.py) to clean the file with raw data, add all mathematical summary & relative columns/selected features, and more
 ### What the final table should look like: (need to add the kinesis / accelo (motion artifact) columns, PSD columns for comparing left and right parts of brain)
 - Timestamp
 - alpha
@@ -103,3 +108,10 @@ NEUROSITY_DEVICE_ID=your device id here
 - relative_theta
 - p_focus
 - p_calm
+- label
+## Training The Model
+(soon)
+## Inference
+(soon)
+## Examples
+(soon)
