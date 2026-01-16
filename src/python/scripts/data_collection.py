@@ -1,36 +1,19 @@
 # all necessary imports for data retrieval and storage
 import time
+import argparse
 import pandas as pd
 from neurosity import NeurositySDK
 from dotenv import load_dotenv
 import os
 
-# Authenticating & Connecting To Neurosity
-load_dotenv()
-neurosity = NeurositySDK({
-    "device_id": os.getenv("NEUROSITY_DEVICE_ID")
-})
-neurosity.login({
-    "email": os.getenv("NEUROSITY_EMAIL"),
-    "password": os.getenv("NEUROSITY_PASSWORD")
-})
-
-# Variables
-seconds = 10000
-focusList = []
-calmList = []
-apList = []
-rawList = []
-FEATURE_CSV_FILE = './data/collected/ap_probability.csv' 
-RAW_CSV_FILE = './data/collected/raw_eeg.csv'
-BUFFER_LIMIT = 100
+# Function saving stored rows to a csv
 def save_checkpoint():
-    
+    print("Saving Current Rows & Clearing Buffer...")
     global apList, calmList, focusList, rawList
-    if not (apList or calmList or focusList): 
-        return # If it is none of the states, nothing to save 
-    
-# Convert lists to DataFrames
+    if not (apList or calmList or focusList or rawList):
+        return # If it is none of the states, nothing to save
+
+    # Convert lists to DataFrames
     ap_df = pd.DataFrame(
         apList,
         columns=["timestamp", "alpha", "beta", "delta", "gamma", "theta"]
@@ -56,7 +39,9 @@ def save_checkpoint():
         merged["timestamp"], unit="ms", utc=True
     ).dt.strftime("%m/%d/%Y, %H:%M:%S")
     merged = merged.drop(columns=["timestamp"])
-
+    # Define paths
+    FEATURE_CSV_FILE = 'data/collected/ap_probability.csv'
+    RAW_CSV_FILE = 'data/collected/raw_eeg.csv'
     # Append feature list to CSV (write header only if file doesn't exist)
     file_exists = os.path.isfile(FEATURE_CSV_FILE)
     merged.to_csv(FEATURE_CSV_FILE, mode="a", header=not file_exists)
@@ -68,18 +53,22 @@ def save_checkpoint():
     print(f"Appended {len(merged)} Rows To ap_probability.csv")
     print(f'Appended {len(raw_df)} Rows To raw_eeg.csv')
     # Clear buffers
-    apList, calmList, focusList, rawList = [], [], [], [] 
+    apList, calmList, focusList, rawList = [], [], [], []
 
 # Callbacks for the SDK
 def callback_focus(data):
     global focusList
-    focusList.append([data['timestamp'],data['probability']]) # adds samples as rows with the structure of [ts, p_f]
+    row = [data['timestamp'],data['probability']]
+    focusList.append(row) # adds samples as rows with the structure of [ts, p_f]
+    print(row)
     if len(focusList) >= BUFFER_LIMIT:
-        save_checkpoint() 
-    
+        save_checkpoint()
+
 def callback_calm(data):
     global calmList
-    calmList.append([data['timestamp'], data['probability']]) # adds samples as rows with the structure of [ts, p_c]
+    row = [data['timestamp'], data['probability']]
+    calmList.append(row) # adds samples as rows with the structure of [ts, p_c]
+    print(row)
     if len(calmList) >= BUFFER_LIMIT:
         save_checkpoint()
 
@@ -87,46 +76,70 @@ def callback_ap(data):
     global apList
     ts = int(time.time() * 1000) # since the API doesn't send the ap's timestamp i use the system clock for it
     # adds samples as rows of [ts, alpha, beta, delta, gamma, theta]
-    apList.append([ts, data['data']['alpha'], data['data']['beta'], data['data']['delta'], data['data']['gamma'], data['data']['theta']])
+    row = [ts, data['data']['alpha'], data['data']['beta'], data['data']['delta'], data['data']['gamma'], data['data']['theta']]
+    apList.append(row)
+    print(row)
     if len(apList) >= BUFFER_LIMIT:
         save_checkpoint()
 
 def callback_raw(data):
     global rawList
+
     ts = data['info']['startTime']
     data = data['data']
     rawList.append([ts] + data)
+    print([ts] + data)
 
-# Subscriptions to the live stream for focus, calm, and absolute power by band
-print(f"collecting data for the ap_probability table for {seconds} seconds")
-focus_unsubscribe = neurosity.focus(callback_focus)
-calm_unsubscribe = neurosity.calm(callback_calm)
-ap_unsubscribe = neurosity.brainwaves_power_by_band(callback_ap)
-raw_unsubscribe = neurosity.brainwaves_raw(callback_raw)
+# function initializing data subscribtions, parsing arguments, and handling exit
+def main():
+    # parse CL arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--seconds", type=int, default=60, help="Recording Duration")
+    parser.add_argument("--buffer_limit", type=int, default=100, help="number or rows to cache before saving to csv")
+    args = parser.parse_args()
 
-# Duration of live stream (execution delayes for s seconds)
-time.sleep(seconds)
+    # All config variables
+    global focusList
+    global calmList
+    global apList
+    global rawList
+    global BUFFER_LIMIT
+    seconds = args.seconds
+    focusList = []
+    calmList = []
+    apList = []
+    rawList = []
+    BUFFER_LIMIT = args.buffer_limit
 
-# Stop Subscription
-focus_unsubscribe()
-calm_unsubscribe()
-ap_unsubscribe()
-raw_unsubscribe()
+    # Authenticating & Connecting To Neurosity
+    load_dotenv()
+    neurosity = NeurositySDK({
+        "device_id": os.getenv("NEUROSITY_DEVICE_ID")
+    })
+    neurosity.login({
+        "email": os.getenv("NEUROSITY_EMAIL"),
+        "password": os.getenv("NEUROSITY_PASSWORD")
+    })
 
-# # Turn all list into DataFrames with named columns for easy modification 
-# apList = pd.DataFrame(apList, columns=["timestamp","alpha","beta","delta","gamma","theta"])
-# calmList = pd.DataFrame(calmList, columns=["timestamp", "p_calm"])
-# focusList = pd.DataFrame(focusList, columns=["timestamp", "p_focus"])
+    # Subscriptions to the Neurosity's live stream for focus, calm, and absolute power by band
+    print(f"collecting data for the ap_probability table for {seconds} seconds")
+    focus_unsubscribe = neurosity.focus(callback_focus)
+    calm_unsubscribe = neurosity.calm(callback_calm)
+    ap_unsubscribe = neurosity.brainwaves_power_by_band(callback_ap)
+    raw_unsubscribe = neurosity.brainwaves_raw(callback_raw)
 
-# # join all rows based on ts column so [ts, p_f] + [ts, p_c] + [ts, a, b, g, d, t] = [ts, a, b, g, t, d, p_f, p_c]
-# ap_probability_table = pd.merge(apList, calmList, on="timestamp", how="outer")
-# ap_probability_table = pd.merge(ap_probability_table, focusList, on="timestamp", how="outer")
+    # Try block to save even if Ctrl+C is pressed
+    try:
+        # Duration of stream
+        time.sleep(seconds)
+    finally:
+        print("Termination Initialized \n Unsubscribing & Saving...")
+        # Stop Subscription
+        focus_unsubscribe()
+        calm_unsubscribe()
+        ap_unsubscribe()
+        raw_unsubscribe()
+        save_checkpoint()
 
-# # Set index to datetime for auto sort and general convenience
-# ap_probability_table.index = pd.to_datetime(ap_probability_table["timestamp"], unit="ms", utc=True).dt.strftime("%m/%d/%Y, %H:%M:%S")
-# ap_probability_table = ap_probability_table.drop(columns=["timestamp"])
-
-# # Save To CSV (needs to be changed to it adds to existing csv)
-# ap_probability_table.to_csv('./data/collected/ap_probability.csv')
-
-save_checkpoint() 
+if __name__ == "__main__":
+    main()
