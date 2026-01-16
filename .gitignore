@@ -6,9 +6,5 @@ venv/
 
 
 # comment/uncomment up to discretion
-# data/
-# data_raw/
-# models/
-# ap_probability.csv
-# raw_eeg.csv
-# ap_probability_clean.csv
+data/
+models/
