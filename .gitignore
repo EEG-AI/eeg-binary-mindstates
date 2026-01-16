@@ -5,6 +5,8 @@ venv/
 .env
 
 
-# comment/uncomment up to discretion
-data/
-models/
+# Data
+ap_probability.csv
+raw_eeg.csv
+ap_probability_clean.csv
+raw_eeg_clean.csv
