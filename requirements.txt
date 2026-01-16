@@ -11,3 +11,6 @@ torch
 # Neurosity Connection
 neurosity
 python-dotenv
+
+# GUI
+pygame
